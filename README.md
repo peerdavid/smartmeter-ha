@@ -16,6 +16,9 @@ I used exactly this hardware.
 
 ## Software
 For the initial setup call `./setup.sh` which installs all the dependencies.
-
+Then enter your key into the `smartmeter.key` file. This ensures
+that you do not accidentally push your key to GitHub as it is gitignored.
 
 # Run
+Simply call `./run.sh`. You can also add this to the bashrc file in order to
+ensure that its running when your Raspberry restarts.
