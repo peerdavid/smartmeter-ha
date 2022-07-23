@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 parser = argparse.ArgumentParser(description='Integrate your smartmeter into HomeAssistant.')
 parser.add_argument('--port', default="/dev/ttyUSB0", help='Port of M-BUS to USB adapter.')
-parser.add_argument('--key', default, help='Path to your keyfile. See also https://www.netz-noe.at/Download-(1)/Smart-Meter/218_9_SmartMeter_Kundenschnittstelle_lektoriert_14.aspx')
+parser.add_argument('--key', required=True, help='Your private smartmeter key. See also https://www.netz-noe.at/Download-(1)/Smart-Meter/218_9_SmartMeter_Kundenschnittstelle_lektoriert_14.aspx')
 
 args = parser.parse_args()
 
