@@ -16,6 +16,14 @@ ensure that its running when your Raspberry restarts.
 The following table from [3] shows the data model:
 <img src="doc/obis.png" />
 
+
+# Problems
+## The USB device /dev/ttyUSB0 is not shown
+It seems that some newer kernels have problems with this usb to serial chip.
+I, therefore, downgraded the kernel to a 5.10 version where it works fine. I
+used the following command: `sudo rpi-update da70b00`
+
+
 # Thanks to
 First of all thanks for "tirolerstefan" and Michael Reitbauer for the great work that
 helped me to realize this project based on their implementations.
