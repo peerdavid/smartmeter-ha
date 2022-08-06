@@ -1,40 +1,47 @@
-import argparse
+#/usr/bin/python3
+import os
+import sys
 import serial
-import time
-
-from gurux_dlms.GXByteBuffer import GXByteBuffer
-from gurux_dlms.GXDLMSTranslator import GXDLMSTranslator
-from gurux_dlms.GXDLMSTranslatorMessage import GXDLMSTranslatorMessage
-from bs4 import BeautifulSoup
+import argparse
+import signal
+import kaifa
 
 
+#
+# ARGS
+#
 parser = argparse.ArgumentParser(description='Integrate your smartmeter into HomeAssistant.')
 parser.add_argument('--port', default="/dev/ttyUSB0", help='Port of M-BUS to USB adapter.')
 parser.add_argument('--key', required=True, help='Your private smartmeter key. See also https://www.netz-noe.at/Download-(1)/Smart-Meter/218_9_SmartMeter_Kundenschnittstelle_lektoriert_14.aspx')
-
 args = parser.parse_args()
 
 
+
+#
+# M A I N
+#
 def main():
-    # Connect mbus via usb adapter
-    tr = GXDLMSTranslator()
-    tr.blockCipherKey = GXByteBuffer(key)
-    tr.comments = True
-    ser = serial.Serial(
-        port=args.port,
-        baudrate=2400,
-        bytesize=serial.EIGHTBITS,
-        parity=serial.PARITY_NONE,
+    serial_conn = serial.Serial(
+        port = args.port,
+        baudrate = 2400,
+        parity = serial.PARITY_NONE,
+        stopbits = serial.STOPBITS_ONE,
+        bytesize = serial.EIGHTBITS,
+        timeout = 1
     )
 
-    # Read data from smartmeter
-    while(True):
-        try:
-            data = ser.read(size=282).hex()
-            print(len(data))
-            time.sleep(1000)
-        except:
-            print("(Error) Could not read data from your smartmeter.")
+    # Ensure that we disconnect from serial
+    def signal_handler(sig, frame):
+        serial_conn.close()
+        sys.exit(0)
+
+    signal.signal(signal.SIGINT, signal_handler)
+
+
+    while True:
+        data = kaifa.read_energy_data(serial_conn, args.key)
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(data)
 
 
 if __name__ == "__main__":

@@ -1,4 +1,5 @@
 #!/bin/bash
 
-
-pip install -r requirements.txt
+sudo apt-get udpate
+sudo apt-get install python3-lxml python-lxml -y
+pip3 install -r requirements.txt
