@@ -19,6 +19,7 @@ The following table from [3] shows the data model:
 # Thanks to
 First of all thanks for "tirolerstefan" and Michael Reitbauer for the great work that
 helped me to realize this project based on their implementations.
+<br /><br />
 [1] https://github.com/tirolerstefan/kaifa/ <br />
 [2] https://www.michaelreitbauer.at/kaifa-ma309-auslesen-smart-meter-evn/ <br />
 [3] https://www.tinetz.at/uploads/tx_bh/tinetz_smart-meter_beschreibung-kundenschnittstelle_001.pdf <br />
