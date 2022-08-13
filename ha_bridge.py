@@ -20,6 +20,7 @@ import paho.mqtt.client as mqtt
 # ARGS
 #
 parser = argparse.ArgumentParser(description='Integrate your smartmeter into HomeAssistant.')
+parser.add_argument('--log_console', required=False, help='Loag all energy values to console.')
 parser.add_argument('--serial_port', default="/dev/ttyUSB0", help='Port of M-BUS to USB adapter.')
 parser.add_argument('--serial_key', required=True, help='Your private smartmeter key. See also https://www.netz-noe.at/Download-(1)/Smart-Meter/218_9_SmartMeter_Kundenschnittstelle_lektoriert_14.aspx')
 parser.add_argument('--mqtt_server', default="localhost", help='MQTT server host.')
@@ -73,8 +74,11 @@ def main():
             for entry in energy_object.data:
                 mqtt_client.publish(f"home/smart_meter/{entry}", energy_object.data[entry])
 
-            os.system('cls' if os.name == 'nt' else 'clear')
-            print(energy_object)
+            if args.log_console:
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print(energy_object)
+            else:
+                print("Successfully updated HomeAssistant sensors.")
         except Exception as e:
             print(f"(Error) Update failed with {e}")
 

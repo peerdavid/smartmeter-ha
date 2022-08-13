@@ -131,6 +131,31 @@ python ha_bridge.py --serial_key=YOUR_SMARMETER_KEY \
     --mqtt_passwd=YOUR_PASSWORD
 ```
 
+# Run as service
+Create the following file with `sudo nano /etc/systemd/system/ha_bridge.service`:
+```
+[Unit]
+Description=HomeAssistant Bridge
+After=multi-user.target
+[Service]
+Type=simple
+Restart=always
+ExecStart=/usr/bin/python3 /home/pi/Dev/smartmeter-ha/ha_bridge.py --serial_key=YOUR_SMARMETER_KEY --mqtt_server=YOUR_MQTT_SERVER --mqtt_user=YOUR_USER --mqtt_passwd=YOUR_PASSWORD
+[Install]
+WantedBy=multi-user.target
+```
+
+Next reload the deamon and enable our service so it works also after a restart:
+```
+sudo systemctl daemon-reload
+sudo systemctl enable ha_bridge.service
+sudo systemctl start ha_bridge.service
+```
+
+To show output logs of your service, simply call
+```
+ournalctl -f -u ha_bridge.service
+```
 
 # Thanks to
 First of all thanks for "tirolerstefan" and Michael Reitbauer for the great work that
