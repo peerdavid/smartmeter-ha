@@ -1,12 +1,14 @@
 #
 # Thanks to https://github.com/tirolerstefan/kaifa/blob/master/kaifareader.py
+# for this really great work. This is basically a refactoring of this work
+# to my needs...
 #
 
 
 import re
 import binascii
 from Cryptodome.Cipher import AES
-
+from datetime import datetime
 
 # TINETZ Supplier specific values
 frame1_start_bytes_hex = '68fafa68'
@@ -86,36 +88,40 @@ class EnergyData:
         self._parse_all()
 
         # Set all values
-        self.energy_in = round(self.obis[ObisCodes.RealEnergyIn] / 1000.0, 2)
-        self.energy_out = round(self.obis[ObisCodes.RealEnergyOut] / 1000.0, 2)
-        self.power_in = round(self.obis[ObisCodes.RealPowerIn] / 1000.0, 2)
-        self.power_out = round(self.obis[ObisCodes.RealPowerOut] / 1000.0, 2)
-        self.reactive_energy_in = round(self.obis[ObisCodes.ReactiveEnergyIn] / 1000.0, 2)
-        self.reactive_energy_out = round(self.obis[ObisCodes.ReactiveEnergyOut] / 1000.0, 2)
-        self.voltage_l1 = round(self.obis[ObisCodes.VoltageL1], 2)
-        self.voltage_l2 = round(self.obis[ObisCodes.VoltageL2], 2)
-        self.voltage_l3 = round(self.obis[ObisCodes.VoltageL3], 2)
-        self.current_l1 = round(self.obis[ObisCodes.CurrentL1], 2)
-        self.current_l2 = round(self.obis[ObisCodes.CurrentL2], 2)
-        self.current_l3 = round(self.obis[ObisCodes.CurrentL3], 2)
+        self.data = {}
+        self.data["datetime"] = datetime.strftime(datetime.now(), "%d %B %Y %X")
+        self.data["energy_in"] = round(self.obis[ObisCodes.RealEnergyIn] / 1000.0, 2)
+        self.data["energy_out"] = round(self.obis[ObisCodes.RealEnergyOut] / 1000.0, 2)
+        self.data["power_in"] = round(self.obis[ObisCodes.RealPowerIn] / 1000.0, 2)
+        self.data["power_out"] = round(self.obis[ObisCodes.RealPowerOut] / 1000.0, 2)
+        self.data["reactive_energy_in"] = round(self.obis[ObisCodes.ReactiveEnergyIn] / 1000.0, 2)
+        self.data["reactive_energy_out"] = round(self.obis[ObisCodes.ReactiveEnergyOut] / 1000.0, 2)
+        self.data["voltage_l1"] = round(self.obis[ObisCodes.VoltageL1], 2)
+        self.data["voltage_l2"] = round(self.obis[ObisCodes.VoltageL2], 2)
+        self.data["voltage_l3"] = round(self.obis[ObisCodes.VoltageL3], 2)
+        self.data["current_l1"] = round(self.obis[ObisCodes.CurrentL1], 2)
+        self.data["current_l2"] = round(self.obis[ObisCodes.CurrentL2], 2)
+        self.data["current_l3"] = round(self.obis[ObisCodes.CurrentL3], 2)
 
 
     def __str__(self):
         return f"""
-EnergyIn: \t {self.energy_in}kWh
-ReacEnergyIn: \t {self.reactive_energy_in}kWh
-PowerIn: \t {self.power_in}kW
+DateTime: \t {self.data["datetime"]}kWh
 
-EnergyOut: \t {self.energy_out}kWh
-ReacEnergyOut: \t {self.reactive_energy_out}kWh
-PowerOut: \t {self.power_out}kW
+EnergyIn: \t {self.data["energy_in"]}kWh
+ReacEnergyIn: \t {self.data["reactive_energy_in"]}kWh
+PowerIn: \t {self.data["power_in"]}kW
 
-VoltageL1: \t {self.voltage_l1}V
-VoltageL2: \t {self.voltage_l2}V
-VoltageL3: \t {self.voltage_l3}V
-CurrentL1: \t {self.current_l1}A
-CurrentL2: \t {self.current_l2}A
-CurrentL3: \t {self.current_l3}A
+EnergyOut: \t {self.data["energy_out"]}kWh
+ReacEnergyOut: \t {self.data["reactive_energy_out"]}kWh
+PowerOut: \t {self.data["power_out"]}kW
+
+VoltageL1: \t {self.data["voltage_l1"]}V
+VoltageL2: \t {self.data["voltage_l2"]}V
+VoltageL3: \t {self.data["voltage_l3"]}V
+CurrentL1: \t {self.data["current_l1"]}A
+CurrentL2: \t {self.data["current_l2"]}A
+CurrentL3: \t {self.data["current_l3"]}A
         """
 
     def _parse_all(self):
