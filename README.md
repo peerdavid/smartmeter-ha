@@ -9,7 +9,7 @@ Thanks to [0,1] for this great work! This repository is basically a refactoring 
 * AES symmetrical key for decrypting MBUS messages, this can be obtained by your grid provider (Tinetz etc.)
 * Raspberry Pi 3/4 (or something that is capable of running docker and has a USB port ;-))
 * USB to MBus *Slave* Adapter: <https://de.aliexpress.com/item/1005004874122617.html?gatewayAdapt=glo2deu>, around € 14,54
-* RJ-12 cable
+* RJ-11 or RJ-12 cable
 
 ### Hardware Setup
 
@@ -71,7 +71,7 @@ ${MQTT_USER}:${MQTT_PASSWD}
 EOF
 
 # 2.) encrypt it
-docker run -it --rm -v ./docker/mosquitto/config:/tmp eclipse-mosquitto:2 mosquitto_passwd -U /tmp/password.txt
+podman run -it --rm -v ./docker/mosquitto/config:/tmp eclipse-mosquitto:2 mosquitto_passwd -U /tmp/password.txt
 ```
 
 * Run the application
@@ -79,13 +79,13 @@ docker run -it --rm -v ./docker/mosquitto/config:/tmp eclipse-mosquitto:2 mosqui
   * In case you are NOT using `telegraf` and NOT using `mqtt`:
 
     ```bash
-    docker compose up -d
+    podman compose up -d
     ```
 
   * In case you are using `mqtt` but NOT `telegraf`:
 
     ```bash
-    docker compose -f docker-compose.yaml -f docker/mosquitto/docker-compose.mqtt.yaml [-f docker/telegraf/docker-compose.telegraf.yaml] up -d
+    podman compose -f docker-compose.yaml -f docker/mosquitto/docker-compose.mqtt.yaml up -d
     ```
 
   * In case you are using `mqtt` AND `telegraf`:
