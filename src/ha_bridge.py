@@ -14,9 +14,7 @@ import signal
 import kaifa
 import paho.mqtt.client as mqtt
 import json
-
-def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
+import logging
 
 #
 # ARGS
@@ -58,7 +56,6 @@ def create_serial_client():
 # M A I N
 #
 def main():
-
     # Create clients
     serial_conn = create_serial_client()
     mqtt_client = create_mqtt_client()
@@ -85,7 +82,8 @@ def main():
             else:
                 print("Successfully updated HomeAssistant sensors.")
         except Exception as e:
-            eprint(f"(Error) Update failed with {e}")
+            logging.exception("Unhandled Exception, quitting")
+            sys.exit(-1)
 
 
 if __name__ == "__main__":
