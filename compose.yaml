@@ -2,7 +2,7 @@ services:
   mbus_to_usb:
     build:
       context: ./
-      dockerfile: ./Dockerfile
+      dockerfile: ./Containerfile
     restart: unless-stopped
     devices:
       - "${HOST_USB_DEVICE:-/dev/ttyUSB0}:/dev/ttyUSB0"

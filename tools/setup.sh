@@ -11,9 +11,8 @@ fi
 sudo apt-get update
 sudo apt-get upgrade -y
 
-# Setup docker
-curl -sSL https://get.docker.com | sh
-sudo usermod -aG docker $USER # requires logout and login to take effect
+# Setup podman
+sudo apt-get -y install podman podman-compose
 
 # sudo apt-get install python3-lxml -y
 

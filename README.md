@@ -32,18 +32,18 @@ For more/alternative instructions, please follow [2].
   ```
 
 * for yet unknown reasons, you might be facing issues that the usb port is not constantly named `/dev/ttyUSB0` (but, e.g., `/dev/ttyUSB1` instead) which makes the container fail and unable to recover;
-  run the following script for creating an (always correct) symlink to `/dev/my_usb`, but make sure that `ls -l /dev/ttyUSB0` is the correct device *prior* to running the script
+  run the following script for creating an (always correct) symlink to `/dev/smartmeter_modbus`, but make sure that `ls -l /dev/ttyUSB0` is the correct device *prior* to running the script
 
   ```sh
   # in certain cases, especially since I'm using a RPi Z2W, the USB device, usually mounted to `/dev/ttyUSB0` seems to be disconnecting after a random amount of time
   # the OS reconnects the usb, but using `/dev/ttyUSB1` instead
-  # this approach creates a udev symlink which allows us to access the device using `/dev/my_usb` regardless of the device file
+  # this approach creates a udev symlink which allows us to access the device using `/dev/smartmeter_modbus` regardless of the device file
   SERIAL_NUMBER=$(sudo udevadm info -a -n /dev/ttyUSB0 | grep '{serial}' | head -n1 | tr -d '[:space:]')
-  echo "SUBSYSTEM==\"tty\", $SERIAL_NUMBER, SYMLINK+=\"my_usb\"" | sudo tee -a /etc/udev/rules.d/999-usb-serial.rules
+  echo "SUBSYSTEM==\"tty\", $SERIAL_NUMBER, SYMLINK+=\"smartmeter_modbus\"" | sudo tee -a /etc/udev/rules.d/999-usb-serial.rules
   sudo udevadm control --reload-rules && sudo udevadm trigger
 
-  # access the device on the host via `/dev/my_usb`, no matter if its /dev/ttyUSB0 or /dev/ttyUSB1
-  ls -l /dev/my_usb
+  # access the device on the host via `/dev/smartmeter_modbus`, no matter if its /dev/ttyUSB0 or /dev/ttyUSB1
+  ls -l /dev/smartmeter_modbus
 
   ## debugging/troubleshooting
   # journalctl -u systemd-udevd
@@ -58,7 +58,7 @@ export MQTT_SERVER=TODO:YourMqttServerHere
 export MQTT_PORT=TODO:YourMqttPortHereUsually1883
 export MQTT_USER=TODO:yourMqttUsernameHere
 export MQTT_PASSWD=TODO:YourMqttPasswordHere
-export HOST_USB_DEVICE=TODO:YourHostUsbDeviceHere (`/dev/my_usb` or `/dev/ttyUSB0`?)
+export HOST_USB_DEVICE=TODO:YourHostUsbDeviceHere (`/dev/smartmeter_modbus`)
 
 # create the `.env` file for docker configuration
 cat << EOF > .env
@@ -99,19 +99,19 @@ podman run -it --rm -v ./docker/mosquitto/config:/tmp eclipse-mosquitto:2 mosqui
   * In case you are NOT using `telegraf` and NOT using `mqtt`:
 
     ```bash
-    docker compose up -d
+    podman compose up -d
     ```
 
   * In case you are using `mqtt` but NOT `telegraf`:
 
     ```bash
-    docker compose -f docker-compose.yaml -f docker/mosquitto/docker-compose.mqtt.yaml up -d
+    podman compose -f compose.yaml -f docker/mosquitto/compose.mqtt.yaml up -d
     ```
 
   * In case you are using `mqtt` AND `telegraf`:
 
     ```bash
-    docker compose -f docker-compose.yaml -f docker/mosquitto/docker-compose.mqtt.yaml -f docker/telegraf/docker-compose.telegraf.yaml up -d
+    podman compose -f compose.yaml -f containers/mosquitto/compose.mqtt.yaml -f containers/telegraf/compose.telegraf.yaml up -d
     ```
 
   > Note: it takes a bit (~1') to start, be patient ;-)
