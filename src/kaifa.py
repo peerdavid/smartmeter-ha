@@ -90,12 +90,12 @@ class EnergyData:
         # Set all values
         self.data = {}
         self.data["datetime"] = datetime.strftime(datetime.now(), "%d %B %Y %X")
-        self.data["energy_in"] = round(self.obis[ObisCodes.RealEnergyIn] / 1000.0, 2)
-        self.data["energy_out"] = round(self.obis[ObisCodes.RealEnergyOut] / 1000.0, 2)
-        self.data["power_in"] = round(self.obis[ObisCodes.RealPowerIn] / 1000.0, 2)
-        self.data["power_out"] = round(self.obis[ObisCodes.RealPowerOut] / 1000.0, 2)
-        self.data["reactive_energy_in"] = round(self.obis[ObisCodes.ReactiveEnergyIn] / 1000.0, 2)
-        self.data["reactive_energy_out"] = round(self.obis[ObisCodes.ReactiveEnergyOut] / 1000.0, 2)
+        self.data["energy_in"] = round(self.obis[ObisCodes.RealEnergyIn] / 1.0, 2)
+        self.data["energy_out"] = round(self.obis[ObisCodes.RealEnergyOut] / 1.0, 2)
+        self.data["power_in"] = round(self.obis[ObisCodes.RealPowerIn] / 1.0, 2)
+        self.data["power_out"] = round(self.obis[ObisCodes.RealPowerOut] / 1.0, 2)
+        self.data["reactive_energy_in"] = round(self.obis[ObisCodes.ReactiveEnergyIn] / 1.0, 2)
+        self.data["reactive_energy_out"] = round(self.obis[ObisCodes.ReactiveEnergyOut] / 1.0, 2)
         self.data["voltage_l1"] = round(self.obis[ObisCodes.VoltageL1], 2)
         self.data["voltage_l2"] = round(self.obis[ObisCodes.VoltageL2], 2)
         self.data["voltage_l3"] = round(self.obis[ObisCodes.VoltageL3], 2)
