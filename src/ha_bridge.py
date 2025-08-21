@@ -25,7 +25,7 @@ parser.add_argument('--log_console', required=False, help='Log all energy values
 parser.add_argument('--serial_port', default="/dev/ttyUSB0", help='Port of M-BUS to USB adapter.')
 parser.add_argument('--serial_key', required=False, default=os.environ.get('SERIAL_KEY'), help='Your private smartmeter key. See also https://www.netz-noe.at/Download-(1)/Smart-Meter/218_9_SmartMeter_Kundenschnittstelle_lektoriert_14.aspx')
 parser.add_argument('--mqtt_server', default=os.environ.get('MQTT_SERVER'), help='MQTT server host.')
-parser.add_argument('--mqtt_port', default=1883, help='MQTT server port.')
+parser.add_argument('--mqtt_port', type=int, default=os.environ.get('MQTT_PORT'), help='MQTT server port.')
 parser.add_argument('--mqtt_user', default=os.environ.get('MQTT_USER'), help='MQTT user.')
 parser.add_argument('--mqtt_passwd', default=os.environ.get('MQTT_PASSWD'), help='MQTT password.')
 parser.add_argument('--sentry_url', default=os.environ.get('SENTRY_URL'), help='Sentry error url, e.g., `https://749459935037466094fd53656df$6f629@o131075.ingest.sentry.io/2505107393847584`')
