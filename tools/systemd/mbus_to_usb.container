@@ -1,0 +1,22 @@
+[Unit]
+Description=M-Bus to USB Smart Meter Bridge
+Documentation=https://github.com/shadow1runner/hass-smartmeter
+After=network-online.target
+Wants=network-online.target
+
+[Container]
+Image=localhost/hass-smartmeter_mbus_to_usb:latest
+EnvironmentFile=mbus_to_usb.env
+AddDevice=/dev/smartmeter_modbus:/dev/ttyUSB0
+# https://www.redhat.com/en/blog/files-devices-podman
+# GroupAdd=dialout
+GroupAdd=keep-groups
+Volume=/etc/localtime:/etc/localtime:ro
+User=1000:1000
+NoNewPrivileges=true
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
