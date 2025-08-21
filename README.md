@@ -7,7 +7,7 @@ Thanks to [0,1] for this great work! This repository is basically a refactoring 
 
 * Kaifa MA309 smart meter
 * AES symmetrical key for decrypting MBUS messages, this can be obtained by your grid provider (Tinetz etc.)
-* Raspberry Pi 3/4 (or something that is capable of running docker and has a USB port ;-))
+* Raspberry Pi 2W/3/4 (or something that is capable of running podman and has a USB port ;-))
 * USB to MBus *Slave* Adapter: <https://de.aliexpress.com/item/1005004874122617.html?gatewayAdapt=glo2deu>, around € 14,54
 * RJ-11 or RJ-12 cable
 
@@ -31,7 +31,7 @@ For more/alternative instructions, please follow [2].
   sh ./tools/setup.sh
   ```
 
-* for yet unknown reasons, you might be facing issues that the usb port is not constantly named `/dev/ttyUSB0` (but, e.g., `/dev/ttyUSB1` instead) which makes the container fail and unable to recover;
+* you might be facing issues that the usb port is not constantly named `/dev/ttyUSB0` (but, e.g., `/dev/ttyUSB1` instead) which makes the container fail and unable to recover;
   run the following script for creating an (always correct) symlink to `/dev/smartmeter_modbus`, but make sure that `ls -l /dev/ttyUSB0` is the correct device *prior* to running the script
 
   ```sh
@@ -50,37 +50,11 @@ For more/alternative instructions, please follow [2].
   # udevadm test $(udevadm info -q path -n /dev/ttyUSB0)
   ```
 
-* Create and **manually add your desired values** in the required configuration file:
+* Copy and **manually edit the values** in tools/systemd/mbus_to_usb.env.example:
 
 ```bash
-export SERIAL_KEY=TODO:yourAESKeyHere
-export MQTT_SERVER=TODO:YourMqttServerHere
-export MQTT_PORT=TODO:YourMqttPortHereUsually1883
-export MQTT_USER=TODO:yourMqttUsernameHere
-export MQTT_PASSWD=TODO:YourMqttPasswordHere
-export HOST_USB_DEVICE=TODO:YourHostUsbDeviceHere (`/dev/smartmeter_modbus`)
-
-# create the `.env` file for docker configuration
-cat << EOF > .env
-COMPOSE_PROJECT_NAME=hass-smartmeter
-
-HOST_USB_DEVICE=${HOST_USB_DEVICE}
-
-SERIAL_KEY=${SERIAL_KEY}
-MQTT_SERVER=${MQTT_SERVER}
-MQTT_PORT=${MQTT_PORT}
-MQTT_USER=${MQTT_USER}
-MQTT_PASSWD=${MQTT_PASSWD}
-
-# OPTIONAL, in case you are using sentry
-# SENTRY_URL=https://....
-
-# OPTIONAL, in case you are using telegraf -> influxdb v2 bridge
-# INFLUX_URL=
-# INFLUX_TOKEN=
-# INFLUX_ORGANIZATION=
-# INFLUX_BUCKET=
-EOF
+cp tools/systemd/mbus_to_usb.env.example tools/systemd/mbus_to_usb.env
+ln -s $(pwd)/tools/systemd/mbus_to_usb.env ~/.config/containers/systemd/mbus_to_usb.env
 
 # create encrypted `password.txt` file for mosquitto
 # https://mosquitto.org/man/mosquitto_passwd-1.html
@@ -94,27 +68,44 @@ EOF
 podman run -it --rm -v ./docker/mosquitto/config:/tmp eclipse-mosquitto:2 mosquitto_passwd -U /tmp/password.txt
 ```
 
+* Build the image:
+
+  ```bash
+  podman-compose build
+  ```
+
 * Run the application
-  > Always make sure that you have your `.env` file configured properly for the desired services
-  * In case you are NOT using `telegraf` and NOT using `mqtt`:
-
-    ```bash
-    podman compose up -d
-    ```
-
-  * In case you are using `mqtt` but NOT `telegraf`:
-
-    ```bash
-    podman compose -f compose.yaml -f docker/mosquitto/compose.mqtt.yaml up -d
-    ```
-
-  * In case you are using `mqtt` AND `telegraf`:
-
-    ```bash
-    podman compose -f compose.yaml -f containers/mosquitto/compose.mqtt.yaml -f containers/telegraf/compose.telegraf.yaml up -d
-    ```
-
+  > You can either use `podman-compose` or quadlets; the latter one integrates nicely with systemd; majority of the setup has been done in [setup.sh](tools/setup.sh) already
   > Note: it takes a bit (~1') to start, be patient ;-)
+
+  * as quadlet:
+    * Great [helper page](https://man.archlinux.org/man/quadlet.5.en) with lots of information
+
+  ```bash
+  systemctl --user daemon-reload
+  systemctl --user start mbus_to_usb.service
+  systemctl --user status mbus_to_usb.service
+  ```
+
+  * using podman-compose
+    > Always make sure that you have your `.env` file configured properly for the desired services
+    * In case you are NOT using `telegraf` and NOT using `mqtt`:
+
+      ```bash
+      podman-compose up -d
+      ```
+
+    * In case you are using `mqtt` but NOT `telegraf`:
+
+      ```bash
+      podman-compose -f compose.yaml -f docker/mosquitto/compose.mqtt.yaml up -d
+      ```
+
+    * In case you are using `mqtt` AND `telegraf`:
+
+      ```bash
+      podman-compose -f compose.yaml -f containers/mosquitto/compose.mqtt.yaml -f containers/telegraf/compose.telegraf.yaml up -d
+      ```
 
 * In order to verify functionality, take an MQTT client of your choice, e.g. [MQTT Explorer](http://mqtt-explorer.com/) and connect to it using your configured credentials, you should see messages in the following topics:
   * `$SYS`
@@ -214,7 +205,7 @@ python ha_bridge.py \
     --mqtt_port=YOUR_MQTT_PORT \
     --mqtt_user=YOUR_USER \
     --mqtt_passwd=YOUR_PASSWORD \
-    --serial_port=/dev/my_usb
+    --serial_port=/dev/ttyUSB0
 ```
 
 ## Thanks to

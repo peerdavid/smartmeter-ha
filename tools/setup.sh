@@ -11,14 +11,9 @@ fi
 sudo apt-get update
 sudo apt-get upgrade -y
 
-# Setup podman
 sudo apt-get -y install podman podman-compose
 
 # allow local quadlets to run on startup
 loginctl enable-linger
 
-# sudo apt-get install python3-lxml -y
-
-# Optionally install an mqtt broker
-# sudo apt install mosquitto -y
-# sudo systemctl enable mosquitto.service
+ln -s systemd/mbus_to_usb.container ~/.config/containers/systemd/mbus_to_usb.container
