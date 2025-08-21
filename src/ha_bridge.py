@@ -13,6 +13,7 @@ import argparse
 import signal
 import kaifa
 import paho.mqtt.client as mqtt
+import json
 
 
 
@@ -73,6 +74,9 @@ def main():
             energy_object = kaifa.read_energy_data(serial_conn, args.serial_key)
             for entry in energy_object.data:
                 mqtt_client.publish(f"home/smart_meter/{entry}", energy_object.data[entry])
+
+            energy_object_str = json.dumps(energy_object.data)
+            mqtt_client.publish(f"home/smart_meter/json", energy_object_str)
 
             if args.log_console:
                 os.system('cls' if os.name == 'nt' else 'clear')
