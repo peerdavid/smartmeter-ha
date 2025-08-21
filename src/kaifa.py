@@ -89,7 +89,7 @@ class EnergyData:
 
         # Set all values
         self.data = {}
-        self.data["timestamp"] = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ%z') # 2023-04-30T10:11:37Z
+        self.data["timestamp"] = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ%z') # 2023-04-30T10:11:37Z
         self.data["energy_in"] = round(self.obis[ObisCodes.RealEnergyIn] / 1000.0, 2)
         self.data["energy_out"] = round(self.obis[ObisCodes.RealEnergyOut] / 1000.0, 2)
         self.data["power_in"] = int(self.obis[ObisCodes.RealPowerIn])
@@ -106,7 +106,7 @@ class EnergyData:
 
     def __str__(self):
         return f"""
-Timestamp: \t {self.data["timestamp"]}
+Timestamp: \t {self.data["timestamp"]} (UTC)
 
 Power In: \t {self.data["power_in"]} W
 Power Out: \t {self.data["power_out"]} W
