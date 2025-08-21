@@ -30,7 +30,7 @@ For more/alternative instructions, please follow [2].
   ```bash
   ./tools/setup.sh
   ```
-* Create required configuration files:
+* Create and **manually add your desired values** in the required configuration file:
 
 ```bash
 export SERIAL_KEY=TODO:yourAESKeyHere
@@ -46,6 +46,9 @@ HOST_USB_DEVICE=/dev/ttyUSB0
 SERIAL_KEY=${SERIAL_KEY}
 MQTT_USER=${MQTT_USER}
 MQTT_PASSWD=${MQTT_PASSWD}
+
+# optional, in case you are using sentry
+# SENTRY_URL=https://....
 
 # optional, in case you are using telegraf -> influxdb v2 bridge
 # INFLUX_URL=

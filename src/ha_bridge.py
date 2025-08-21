@@ -15,6 +15,7 @@ import kaifa
 import paho.mqtt.client as mqtt
 import json
 import logging
+import sentry_sdk
 
 #
 # ARGS
@@ -27,6 +28,7 @@ parser.add_argument('--mqtt_server', default=os.environ.get('MQTT_SERVER'), help
 parser.add_argument('--mqtt_port', default=1883, help='MQTT server port.')
 parser.add_argument('--mqtt_user', default=os.environ.get('MQTT_USER'), help='MQTT user.')
 parser.add_argument('--mqtt_passwd', default=os.environ.get('MQTT_PASSWD'), help='MQTT password.')
+parser.add_argument('--sentry_url', default=os.environ.get('SENTRY_URL'), help='Sentry error url, e.g., `https://749459935037466094fd53656df$6f629@o131075.ingest.sentry.io/2505107393847584`')
 args = parser.parse_args()
 
 
@@ -51,6 +53,17 @@ def create_serial_client():
         timeout = 1
     )
 
+def initialize_sentry():
+
+    if(not args.sentry_url):
+        sentry_sdk.init(
+            dsn=args.sentry_url,
+
+            # Set traces_sample_rate to 1.0 to capture 100%
+            # of transactions for performance monitoring.
+            # We recommend adjusting this value in production.
+            traces_sample_rate=0.0
+        )
 
 #
 # M A I N
@@ -59,6 +72,7 @@ def main():
     # Create clients
     serial_conn = create_serial_client()
     mqtt_client = create_mqtt_client()
+    initialize_sentry()
 
     # Ensure that we correctly disconnect from serial
     def signal_handler(sig, frame):
