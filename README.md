@@ -27,8 +27,27 @@ For more/alternative instructions, please follow [2].
 
 * run:
 
-  ```bash
+  ```sh
   sh ./tools/setup.sh
+  ```
+
+* for yet unknown reasons, you might be facing issues that the usb port is not constantly named `/dev/ttyUSB0` (but, e.g., `/dev/ttyUSB1` instead) which makes the container fail and unable to recover;
+  run the following script for creating an (always correct) symlink to `/dev/my_usb`, but make sure that `ls -l /dev/ttyUSB0` is the correct device *prior* to running the script
+
+  ```sh
+  # in certain cases, especially since I'm using a RPi Z2W, the USB device, usually mounted to `/dev/ttyUSB0` seems to be disconnecting after a random amount of time
+  # the OS reconnects the usb, but using `/dev/ttyUSB1` instead
+  # this approach creates a udev symlink which allows us to access the device using `/dev/my_usb` regardless of the device file
+  SERIAL_NUMBER=$(sudo udevadm info -a -n /dev/ttyUSB0 | grep '{serial}' | head -n1 | tr -d '[:space:]')
+  echo "SUBSYSTEM==\"tty\", $SERIAL_NUMBER, SYMLINK+=\"my_usb\"" | sudo tee -a /etc/udev/rules.d/999-usb-serial.rules
+  sudo udevadm control --reload-rules && sudo udevadm trigger
+
+  # access the device on the host via `/dev/my_usb`, no matter if its /dev/ttyUSB0 or /dev/ttyUSB1
+  ls -l /dev/my_usb
+
+  ## debugging/troubleshooting
+  # journalctl -u systemd-udevd
+  # udevadm test $(udevadm info -q path -n /dev/ttyUSB0)
   ```
 
 * Create and **manually add your desired values** in the required configuration file:
@@ -39,12 +58,13 @@ export MQTT_SERVER=TODO:YourMqttServerHere
 export MQTT_PORT=TODO:YourMqttPortHereUsually1883
 export MQTT_USER=TODO:yourMqttUsernameHere
 export MQTT_PASSWD=TODO:YourMqttPasswordHere
+export HOST_USB_DEVICE=TODO:YourHostUsbDeviceHere (`/dev/my_usb` or `/dev/ttyUSB0`?)
 
 # create the `.env` file for docker configuration
 cat << EOF > .env
 COMPOSE_PROJECT_NAME=hass-smartmeter
 
-HOST_USB_DEVICE=/dev/ttyUSB0
+HOST_USB_DEVICE=${HOST_USB_DEVICE}
 
 SERIAL_KEY=${SERIAL_KEY}
 MQTT_SERVER=${MQTT_SERVER}
@@ -193,7 +213,8 @@ python ha_bridge.py \
     --mqtt_server=YOUR_MQTT_SERVER \
     --mqtt_port=YOUR_MQTT_PORT \
     --mqtt_user=YOUR_USER \
-    --mqtt_passwd=YOUR_PASSWORD
+    --mqtt_passwd=YOUR_PASSWORD \
+    --serial_port=/dev/my_usb
 ```
 
 ## Thanks to
