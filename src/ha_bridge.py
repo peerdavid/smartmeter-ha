@@ -13,6 +13,7 @@ import argparse
 import signal
 import kaifa
 import paho.mqtt.client as mqtt
+from paho.mqtt.enums import MQTTErrorCode
 import json
 import logging
 import sentry_sdk
@@ -38,10 +39,18 @@ args = parser.parse_args()
 def create_mqtt_client():
     mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, "kaifareader")
     mqttc.username_pw_set(args.mqtt_user, args.mqtt_passwd)
-    mqttc.connect(args.mqtt_server, port=args.mqtt_port)
-    mqttc.loop_start()
+    err = mqttc.connect(args.mqtt_server, port=args.mqtt_port)
+    check_mqtt_error(err)
+
+    err = mqttc.loop_start()
+    check_mqtt_error(err)
+
     return mqttc
 
+def check_mqtt_error(error: MQTTErrorCode):
+    if error != MQTTErrorCode.MQTT_ERR_SUCCESS:
+        logging.error(f"MQTT error occurred: {error}")
+        sys.exit(1)
 
 def create_serial_client():
     return serial.Serial(
