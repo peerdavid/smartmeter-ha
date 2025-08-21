@@ -106,22 +106,22 @@ class EnergyData:
 
     def __str__(self):
         return f"""
-DateTime: \t {self.data["datetime"]}kWh
+DateTime: \t {self.data["datetime"]}
 
-EnergyIn: \t {self.data["energy_in"]}kWh
-ReacEnergyIn: \t {self.data["reactive_energy_in"]}kWh
-PowerIn: \t {self.data["power_in"]}kW
+EnergyIn: \t {self.data["energy_in"]} kWh
+ReacEnergyIn: \t {self.data["reactive_energy_in"]} kWh
+PowerIn: \t {self.data["power_in"]} kW
 
-EnergyOut: \t {self.data["energy_out"]}kWh
-ReacEnergyOut: \t {self.data["reactive_energy_out"]}kWh
-PowerOut: \t {self.data["power_out"]}kW
+EnergyOut: \t {self.data["energy_out"]} kWh
+ReacEnergyOut: \t {self.data["reactive_energy_out"]} kWh
+PowerOut: \t {self.data["power_out"]} kW
 
-VoltageL1: \t {self.data["voltage_l1"]}V
-VoltageL2: \t {self.data["voltage_l2"]}V
-VoltageL3: \t {self.data["voltage_l3"]}V
-CurrentL1: \t {self.data["current_l1"]}A
-CurrentL2: \t {self.data["current_l2"]}A
-CurrentL3: \t {self.data["current_l3"]}A
+VoltageL1: \t {self.data["voltage_l1"]} V
+VoltageL2: \t {self.data["voltage_l2"]} V
+VoltageL3: \t {self.data["voltage_l3"]} V
+CurrentL1: \t {self.data["current_l1"]} A
+CurrentL2: \t {self.data["current_l2"]} A
+CurrentL3: \t {self.data["current_l3"]} A
         """
 
     def _parse_all(self):

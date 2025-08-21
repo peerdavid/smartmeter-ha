@@ -20,13 +20,13 @@ import paho.mqtt.client as mqtt
 # ARGS
 #
 parser = argparse.ArgumentParser(description='Integrate your smartmeter into HomeAssistant.')
-parser.add_argument('--log_console', required=False, help='Loag all energy values to console.')
+parser.add_argument('--log_console', required=False, help='Log all energy values to console.')
 parser.add_argument('--serial_port', default="/dev/ttyUSB0", help='Port of M-BUS to USB adapter.')
-parser.add_argument('--serial_key', required=True, help='Your private smartmeter key. See also https://www.netz-noe.at/Download-(1)/Smart-Meter/218_9_SmartMeter_Kundenschnittstelle_lektoriert_14.aspx')
-parser.add_argument('--mqtt_server', default="localhost", help='MQTT server host.')
+parser.add_argument('--serial_key', required=False, default=os.environ.get('SERIAL_KEY'), help='Your private smartmeter key. See also https://www.netz-noe.at/Download-(1)/Smart-Meter/218_9_SmartMeter_Kundenschnittstelle_lektoriert_14.aspx')
+parser.add_argument('--mqtt_server', default=os.environ.get('MQTT_SERVER'), help='MQTT server host.')
 parser.add_argument('--mqtt_port', default=1883, help='MQTT server port.')
-parser.add_argument('--mqtt_user', default="user", help='MQTT user.')
-parser.add_argument('--mqtt_passwd', default="passwd", help='MQTT password.')
+parser.add_argument('--mqtt_user', default=os.environ.get('MQTT_USER'), help='MQTT user.')
+parser.add_argument('--mqtt_passwd', default=os.environ.get('MQTT_PASSWD'), help='MQTT password.')
 args = parser.parse_args()
 
 
