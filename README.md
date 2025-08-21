@@ -1,24 +1,44 @@
-# Integration of Smartmeter(KaifaMA309) into HomeAssistant
-This project integrates a KaifaMA309 (TINETZ) smartmeter into HomeAssistant.
-Thanks to [1] for this great work! This repository is basically
-a refactoring with some minor changes.
+# Integration of Smartmeter (KaifaMA309) into HomeAssistant
 
+This project integrates a Kaifa MA309 smartmeter (such as often in use by Tinetz) into HomeAssistant.
+Thanks to [1] for this great work! This repository is basically a refactoring with some minor changes.
 
-# Hardware
-Please follow [2] to setup your hardware. I use exactly this hardware setup and it works fine.
+## Requirements
 
-# Setup Raspberry
-I first had the problem that `/dev/ttyUSB0` was not shown after installing a
-new Raspberry Pi 4 and connecting the USB to MBUS converter. It seems that
-there is a kernel bug and a kernel downgrade, therefore, solves this issue.
-I made the downgrade through `sudo rpi-update da70b00`.
+* Kaifa MA309 smart meter
+* AES symmetrical key for decrypting MBus messages, this can be obtained by your grid provider
+* Raspberry Pi 3/4
+* USB to MBus *Slave* Adapter: <https://de.aliexpress.com/item/1005004874122617.html?gatewayAdapt=glo2deu>, around € 14,54
+* RJ-12 cable
+
+### Hardware Setup
+
+Use the two inner wires and connect them to the USB to MBus adapter:
+
+> Note: Not sure if polarity matters or not, so first measure the voltage with a meter; in my case the red wire has +27 V while the green wire was ground
+
+![Wiring Schematics](docs/wiring-schematic.drawio.svg)
+
+![Wiring](docs/wiring.jpg)
+
+For more/alternative instructions, please follow [2].
+
+### Software
+
+```bash
+./tools/setup.sh
+pushd src
+pip install -r requirements.txt
+popd
+```
+
 
 To installl all requirements call `./setup.sh`. Next you either setup a broker
 in HomeAssistant (install through addons) or you install your
 own broker. If you want to setup a new broker, ensure that you enable external
 acccess:
 
-```
+```bash
 sudo nano /etc/mosquitto/mosquitto.conf
 
 # Add the following lines at the end of the file:
@@ -31,6 +51,7 @@ sudo systemctl restart mosquitto
 
 Finally, add all the sensors to HomeAssistant. Open the `configuration.yaml` file
 in HomeAssistant and add the following:
+
 ```yaml
 sensor:
   - platform: mqtt
@@ -123,7 +144,9 @@ Now restart your HA and you should see the sensors. To update
 values you have to run the script.
 
 # Run
-You can simiply run the script to test whether values are updated in HomeAssistant.
+
+You can simply run the script to test whether values are updated in HomeAssistant.
+
 ```bash
 python ha_bridge.py --serial_key=YOUR_SMARMETER_KEY \
     --mqtt_server=YOUR_MQTT_SERVER \
@@ -132,7 +155,9 @@ python ha_bridge.py --serial_key=YOUR_SMARMETER_KEY \
 ```
 
 # Run as service
+
 Create the following file with `sudo nano /etc/systemd/system/ha_bridge.service`:
+
 ```
 [Unit]
 Description=HomeAssistant Bridge
@@ -153,14 +178,16 @@ sudo systemctl start ha_bridge.service
 ```
 
 To show output logs of your service, simply call
+
 ```
-ournalctl -f -u ha_bridge.service
+journalctl -f -u ha_bridge.service
 ```
 
 # Thanks to
+
 First of all thanks for "tirolerstefan" and Michael Reitbauer for the great work that
 helped me to realize this project based on their implementations.
-<br /><br />
-[1] https://github.com/tirolerstefan/kaifa/ <br />
-[2] https://www.michaelreitbauer.at/kaifa-ma309-auslesen-smart-meter-evn/ <br />
-[3] https://www.tinetz.at/uploads/tx_bh/tinetz_smart-meter_beschreibung-kundenschnittstelle_001.pdf <br />
+
+[1] <https://github.com/tirolerstefan/kaifa/>
+[2] <https://www.michaelreitbauer.at/kaifa-ma309-auslesen-smart-meter-evn/>
+[3] <https://www.tinetz.at/uploads/tx_bh/tinetz_smart-meter_beschreibung-kundenschnittstelle_001.pdf>
