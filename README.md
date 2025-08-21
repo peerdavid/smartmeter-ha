@@ -28,7 +28,7 @@ For more/alternative instructions, please follow [2].
 * run:
 
   ```bash
-  ./tools/setup.sh
+  sh ./tools/setup.sh
   ```
 
 * Create and **manually add your desired values** in the required configuration file:
@@ -79,13 +79,13 @@ podman run -it --rm -v ./docker/mosquitto/config:/tmp eclipse-mosquitto:2 mosqui
   * In case you are NOT using `telegraf` and NOT using `mqtt`:
 
     ```bash
-    podman compose up -d
+    docker compose up -d
     ```
 
   * In case you are using `mqtt` but NOT `telegraf`:
 
     ```bash
-    podman compose -f docker-compose.yaml -f docker/mosquitto/docker-compose.mqtt.yaml up -d
+    docker compose -f docker-compose.yaml -f docker/mosquitto/docker-compose.mqtt.yaml up -d
     ```
 
   * In case you are using `mqtt` AND `telegraf`:
