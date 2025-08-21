@@ -10,43 +10,9 @@ services:
       - "${HOST_USB_DEVICE:-/dev/ttyUSB0}:/dev/ttyUSB0"
     environment:
       - SERIAL_KEY=${SERIAL_KEY}
-      - MQTT_SERVER=mqtt
+      - MQTT_SERVER=${MQTT_SERVER}
+      - MQTT_PORT=${MQTT_PORT}
       - MQTT_USER=${MQTT_USER}
       - MQTT_PASSWD=${MQTT_PASSWD}
     volumes:
       - /etc/localtime:/etc/localtime:ro
-    depends_on:
-      mqtt:
-        condition: service_healthy
-
-  mqtt:
-    image: eclipse-mosquitto:2
-    # user: mosquitto
-    user: 1000:1000
-    environment:
-      - PUID=1000 #optional
-      - PGID=1000 #optional
-      - MQTT_USER=${MQTT_USER}
-      - MQTT_PASSWD=${MQTT_PASSWD}
-    volumes:
-      - ./docker/mosquitto/config:/mosquitto/config
-      - ./docker/mosquitto/log:/mosquitto/log
-      # - ./docker/mosquitto/data:/mosquitto/data
-      - type: volume
-        source: mqtt-data
-        target: /mosquitto/data
-    ports:
-      - 1883:1883
-      #- 9001:9001
-    restart: unless-stopped
-    # from https://github.com/eclipse/mosquitto/issues/1270#issuecomment-1476038461
-    healthcheck:
-      test: ["CMD", "mosquitto_sub", "-u", "${MQTT_USER}", "-P", "${MQTT_PASSWD}", "-t", "$$SYS/#", "-C", "1", "-i", "healthcheck", "-W", "3"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-      start_period: 20s
-
-volumes:
-  mqtt-data:
-    name: "mqtt-broker-data"
