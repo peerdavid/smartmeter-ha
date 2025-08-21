@@ -1,0 +1,7 @@
+gurux-dlms
+beautifulsoup4
+lxml
+pyserial
+cryptography
+pycryptodomex
+paho-mqtt
