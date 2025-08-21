@@ -30,10 +30,13 @@ For more/alternative instructions, please follow [2].
   ```bash
   ./tools/setup.sh
   ```
+
 * Create and **manually add your desired values** in the required configuration file:
 
 ```bash
 export SERIAL_KEY=TODO:yourAESKeyHere
+export MQTT_SERVER=TODO:YourMqttServerHere
+export MQTT_PORT=TODO:YourMqttPortHereUsually1883
 export MQTT_USER=TODO:yourMqttUsernameHere
 export MQTT_PASSWD=TODO:YourMqttPasswordHere
 
@@ -44,13 +47,15 @@ COMPOSE_PROJECT_NAME=hass-smartmeter
 HOST_USB_DEVICE=/dev/ttyUSB0
 
 SERIAL_KEY=${SERIAL_KEY}
+MQTT_SERVER=${MQTT_SERVER}
+MQTT_PORT=${MQTT_PORT}
 MQTT_USER=${MQTT_USER}
 MQTT_PASSWD=${MQTT_PASSWD}
 
-# optional, in case you are using sentry
+# OPTIONAL, in case you are using sentry
 # SENTRY_URL=https://....
 
-# optional, in case you are using telegraf -> influxdb v2 bridge
+# OPTIONAL, in case you are using telegraf -> influxdb v2 bridge
 # INFLUX_URL=
 # INFLUX_TOKEN=
 # INFLUX_ORGANIZATION=
@@ -66,19 +71,27 @@ ${MQTT_USER}:${MQTT_PASSWD}
 EOF
 
 # 2.) encrypt it
-docker run -it -v ./docker/mosquitto/config:/tmp eclipse-mosquitto:2 mosquitto_passwd -U /tmp/password.txt
+docker run -it --rm -v ./docker/mosquitto/config:/tmp eclipse-mosquitto:2 mosquitto_passwd -U /tmp/password.txt
 ```
 
 * Run the application
-  * In case you are NOT using `telegraf`:
+  > Always make sure that you have your `.env` file configured properly for the desired services
+  * In case you are NOT using `telegraf` and NOT using `mqtt`:
 
     ```bash
     docker compose up -d
     ```
-  * Otherwise make sure that you have your `.env` file configured properly and run:
+
+  * In case you are using `mqtt` but NOT `telegraf`:
 
     ```bash
-    docker compose -f docker-compose.yaml -f docker/telegraf/docker-compose.telegraf.yaml up -d
+    docker compose -f docker-compose.yaml -f docker/mosquitto/docker-compose.mqtt.yaml [-f docker/telegraf/docker-compose.telegraf.yaml] up -d
+    ```
+
+  * In case you are using `mqtt` AND `telegraf`:
+
+    ```bash
+    docker compose -f docker-compose.yaml -f docker/mosquitto/docker-compose.mqtt.yaml -f docker/telegraf/docker-compose.telegraf.yaml up -d
     ```
 
   > Note: it takes a bit (~1') to start, be patient ;-)
@@ -175,9 +188,10 @@ docker run -it -v ./docker/mosquitto/config:/tmp eclipse-mosquitto:2 mosquitto_p
       unit_of_measurement: "A"
       state_topic: "home/smart_meter/current_l3"
   ```
+
 * now restart your HA and you should see the sensors.
 
-# Run
+## Run
 
 In case docker doesn't want to work, you can simply run following script to test whether values are updated.
 
@@ -188,13 +202,14 @@ python ha_bridge.py \
     --log_console True \
     --serial_key=YOUR_SMARMETER_KEY \
     --mqtt_server=YOUR_MQTT_SERVER \
+    --mqtt_port=YOUR_MQTT_PORT \
     --mqtt_user=YOUR_USER \
     --mqtt_passwd=YOUR_PASSWORD
 ```
 
 ## Thanks to
 
-First of all thanks for "tirolerstefan" and Michael Reitbauer for the great work that
+First of all thanks to "tirolerstefan" and Michael Reitbauer for the great work that
 helped me to realize this project based on their implementations.
 
 * [0] <https://github.com/peerdavid/smartmeter-ha>
