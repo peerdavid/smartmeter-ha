@@ -4,5 +4,5 @@ lxml
 pyserial
 cryptography
 pycryptodomex
-paho-mqtt
+paho-mqtt >= 2.0.0
 sentry-sdk
