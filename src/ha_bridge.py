@@ -15,7 +15,8 @@ import kaifa
 import paho.mqtt.client as mqtt
 import json
 
-
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 #
 # ARGS
@@ -84,7 +85,7 @@ def main():
             else:
                 print("Successfully updated HomeAssistant sensors.")
         except Exception as e:
-            print(f"(Error) Update failed with {e}")
+            eprint(f"(Error) Update failed with {e}")
 
 
 if __name__ == "__main__":
