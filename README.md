@@ -46,6 +46,12 @@ HOST_USB_DEVICE=/dev/ttyUSB0
 SERIAL_KEY=${SERIAL_KEY}
 MQTT_USER=${MQTT_USER}
 MQTT_PASSWD=${MQTT_PASSWD}
+
+# optional, in case you are using telegraf -> influxdb v2 bridge
+# INFLUX_URL=
+# INFLUX_TOKEN=
+# INFLUX_ORGANIZATION=
+# INFLUX_BUCKET=
 EOF
 
 # create encrypted `password.txt` file for mosquitto
@@ -61,10 +67,16 @@ docker run -it -v ./docker/mosquitto/config:/tmp eclipse-mosquitto:2 mosquitto_p
 ```
 
 * Run the application
+  * In case you are NOT using `telegraf`:
 
-  ```bash
-  docker compose up -d
-  ```
+    ```bash
+    docker compose up -d
+    ```
+  * Otherwise make sure that you have your `.env` file configured properly and run:
+
+    ```bash
+    docker compose -f docker-compose.yaml -f docker/telegraf/docker-compose.telegraf.yaml up -d
+    ```
 
   > Note: it takes a bit (~1') to start, be patient ;-)
 
@@ -87,7 +99,7 @@ docker run -it -v ./docker/mosquitto/config:/tmp eclipse-mosquitto:2 mosquitto_p
       unique_id: "smart_meter_power_in"
       device_class: "power"
       state_class: "measurement"
-      unit_of_measurement: "kW"
+      unit_of_measurement: "W"
       state_topic: "home/smart_meter/power_in"
     - platform: mqtt
       name: "Reactice Energy In"
@@ -108,7 +120,7 @@ docker run -it -v ./docker/mosquitto/config:/tmp eclipse-mosquitto:2 mosquitto_p
       unique_id: "smart_meter_power_out"
       device_class: "power"
       state_class: "measurement"
-      unit_of_measurement: "kW"
+      unit_of_measurement: "W"
       state_topic: "home/smart_meter/power_out"
     - platform: mqtt
       name: "Reactice Energy Out"
