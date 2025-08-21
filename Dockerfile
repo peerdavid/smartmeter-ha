@@ -11,5 +11,4 @@ COPY ./src .
 
 ENV TERM=xterm
 
-# CMD [ "python", "tmp.py"]
 CMD [ "python", "ha_bridge.py", "--log_console", "True"]
