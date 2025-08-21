@@ -36,11 +36,11 @@ args = parser.parse_args()
 # HELPER
 #
 def create_mqtt_client():
-    mqtt_client = mqtt.Client("kaifareader")
-    mqtt_client.username_pw_set(args.mqtt_user, args.mqtt_passwd)
-    mqtt_client.connect(args.mqtt_server, port=args.mqtt_port)
-    mqtt_client.loop_start()
-    return mqtt_client
+    mqttc = mqtt.Client(mqtt.CallbackAPIVersion.VERSION2, "kaifareader")
+    mqttc.username_pw_set(args.mqtt_user, args.mqtt_passwd)
+    mqttc.connect(args.mqtt_server, port=args.mqtt_port)
+    mqttc.loop_start()
+    return mqttc
 
 
 def create_serial_client():
@@ -54,7 +54,6 @@ def create_serial_client():
     )
 
 def initialize_sentry():
-
     if(not args.sentry_url):
         sentry_sdk.init(
             dsn=args.sentry_url,
@@ -71,7 +70,7 @@ def initialize_sentry():
 def main():
     # Create clients
     serial_conn = create_serial_client()
-    mqtt_client = create_mqtt_client()
+    mqttc = create_mqtt_client()
     initialize_sentry()
 
     # Ensure that we correctly disconnect from serial
@@ -85,10 +84,10 @@ def main():
         try:
             energy_object = kaifa.read_energy_data(serial_conn, args.serial_key)
             for entry in energy_object.data:
-                mqtt_client.publish(f"home/smart_meter/{entry}", energy_object.data[entry])
+                mqttc.publish(f"home/smart_meter/{entry}", energy_object.data[entry])
 
             energy_object_str = json.dumps(energy_object.data)
-            mqtt_client.publish(f"home/smart_meter/json", energy_object_str)
+            mqttc.publish(f"home/smart_meter/json", energy_object_str)
 
             if args.log_console:
                 os.system('cls' if os.name == 'nt' else 'clear')
@@ -98,7 +97,6 @@ def main():
         except Exception as e:
             logging.exception("Unhandled Exception, quitting")
             sys.exit(-1)
-
 
 if __name__ == "__main__":
     main()
