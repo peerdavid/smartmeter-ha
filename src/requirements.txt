@@ -1,0 +1,8 @@
+gurux-dlms
+beautifulsoup4
+lxml
+pyserial
+cryptography
+pycryptodomex
+paho-mqtt >= 2.0.0
+sentry-sdk

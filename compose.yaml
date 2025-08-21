@@ -1,0 +1,15 @@
+services:
+  mbus_to_usb:
+    build:
+      context: ./
+      dockerfile: ./Containerfile
+    devices:
+      - "${HOST_USB_DEVICE:-/dev/smartmeter_modbus}:/dev/ttyUSB0"
+    environment:
+      - SERIAL_KEY=${SERIAL_KEY}
+      - MQTT_SERVER=${MQTT_SERVER}
+      - MQTT_PORT=${MQTT_PORT}
+      - MQTT_USER=${MQTT_USER}
+      - MQTT_PASSWD=${MQTT_PASSWD}
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
