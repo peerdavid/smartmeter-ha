@@ -89,13 +89,13 @@ class EnergyData:
 
         # Set all values
         self.data = {}
-        self.data["datetime"] = datetime.strftime(datetime.now(), "%d %B %Y %X")
-        self.data["energy_in"] = round(self.obis[ObisCodes.RealEnergyIn] / 1.0, 2)
-        self.data["energy_out"] = round(self.obis[ObisCodes.RealEnergyOut] / 1.0, 2)
-        self.data["power_in"] = round(self.obis[ObisCodes.RealPowerIn] / 1.0, 2)
-        self.data["power_out"] = round(self.obis[ObisCodes.RealPowerOut] / 1.0, 2)
-        self.data["reactive_energy_in"] = round(self.obis[ObisCodes.ReactiveEnergyIn] / 1.0, 2)
-        self.data["reactive_energy_out"] = round(self.obis[ObisCodes.ReactiveEnergyOut] / 1.0, 2)
+        self.data["timestamp"] = datetime.now().strftime('%Y-%m-%dT%H:%M:%SZ%z') # 2023-04-30T10:11:37Z
+        self.data["energy_in"] = round(self.obis[ObisCodes.RealEnergyIn] / 1000.0, 2)
+        self.data["energy_out"] = round(self.obis[ObisCodes.RealEnergyOut] / 1000.0, 2)
+        self.data["power_in"] = int(self.obis[ObisCodes.RealPowerIn])
+        self.data["power_out"] = int(self.obis[ObisCodes.RealPowerOut])
+        self.data["reactive_energy_in"] = round(self.obis[ObisCodes.ReactiveEnergyIn] / 1000.0, 2)
+        self.data["reactive_energy_out"] = round(self.obis[ObisCodes.ReactiveEnergyOut] / 1000.0, 2)
         self.data["voltage_l1"] = round(self.obis[ObisCodes.VoltageL1], 2)
         self.data["voltage_l2"] = round(self.obis[ObisCodes.VoltageL2], 2)
         self.data["voltage_l3"] = round(self.obis[ObisCodes.VoltageL3], 2)
@@ -106,22 +106,24 @@ class EnergyData:
 
     def __str__(self):
         return f"""
-DateTime: \t {self.data["datetime"]}
+Timestamp: \t {self.data["timestamp"]}
 
-EnergyIn: \t {self.data["energy_in"]} kWh
-ReacEnergyIn: \t {self.data["reactive_energy_in"]} kWh
-PowerIn: \t {self.data["power_in"]} kW
+Power In: \t {self.data["power_in"]} W
+Power Out: \t {self.data["power_out"]} W
 
-EnergyOut: \t {self.data["energy_out"]} kWh
-ReacEnergyOut: \t {self.data["reactive_energy_out"]} kWh
-PowerOut: \t {self.data["power_out"]} kW
+Energy In: \t {self.data["energy_in"]} kWh
+Energy Out: \t {self.data["energy_out"]} kWh
 
-VoltageL1: \t {self.data["voltage_l1"]} V
-VoltageL2: \t {self.data["voltage_l2"]} V
-VoltageL3: \t {self.data["voltage_l3"]} V
-CurrentL1: \t {self.data["current_l1"]} A
-CurrentL2: \t {self.data["current_l2"]} A
-CurrentL3: \t {self.data["current_l3"]} A
+Voltage L1: \t {self.data["voltage_l1"]} V
+Voltage L2: \t {self.data["voltage_l2"]} V
+Voltage L3: \t {self.data["voltage_l3"]} V
+
+Current L1: \t {self.data["current_l1"]} A
+Current L2: \t {self.data["current_l2"]} A
+Current L3: \t {self.data["current_l3"]} A
+
+Reactive Energy In: \t {self.data["reactive_energy_in"]} kWh
+Reactive Energy Out: \t {self.data["reactive_energy_out"]} kWh
         """
 
     def _parse_all(self):
