@@ -182,9 +182,9 @@ podman run -it --rm -v ./docker/mosquitto/config:/tmp eclipse-mosquitto:2 mosqui
 
 ## Run
 
-In case docker doesn't want to work, you can simply run following script to test whether values are updated.
+In case docker doesn't want to work, you can simply run the following script to test whether values are updated.
 
-> Note that this requires an MQTT server to run, i.e. `docker compose up mqtt`
+> Note that this requires an MQTT server to run, i.e. `docker compose -f docker-compose.yaml -f docker/mosquitto/docker-compose.mqtt.yaml up mqtt`
 
 ```bash
 python ha_bridge.py \
